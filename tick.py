@@ -6,7 +6,6 @@ class TicTacToe:
     def __init__(self):
         self.board = [' '] * 9
         self.current_winner = None
-        self.current_player = 'X'  # Start with Player X (you)
 
     def available_actions(self):
         return [i for i, x in enumerate(self.board) if x == ' ']
@@ -38,28 +37,26 @@ game = st.session_state.game
 
 # Title and instructions
 st.title("🎮 Tic-Tac-Toe (Streamlit Edition)")
-st.markdown("**You are: ❌ (Player X)**  |  **Computer is: ⭕
+st.markdown("**You are: ❌ (Player X)**  |  **Computer is: ⭕ (Player O)**")
 
-Click a square to make your move.**")
-
-# Current player status
+# Turn display
 if not game.current_winner and not game.is_full():
-    st.info(f"Current Turn: **{game.current_player}**")
+    st.info("Your turn! Click an empty square to place ❌")
 
-# Display the board
+# Display board
 cols = st.columns(3)
 for i in range(9):
     with cols[i % 3]:
         if game.board[i] == ' ' and game.current_winner is None:
-            if st.button(" ", key=i, help=f"Place {game.current_player} here"):
+            if st.button(" ", key=i, help="Click to place ❌"):
                 game.make_move(i, 'X')
                 if not game.current_winner and not game.is_full():
                     ai_move = np.random.choice(game.available_actions())
                     game.make_move(ai_move, 'O')
         else:
-            st.markdown(f"<div style='text-align: center; font-size: 24px;'><b>{game.board[i]}</b></div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='text-align:center; font-size:30px'><b>{game.board[i]}</b></div>", unsafe_allow_html=True)
 
-# Result message
+# Result display
 if game.current_winner:
     st.success(f"🎉 Player **{game.current_winner}** wins!")
 elif game.is_full():
