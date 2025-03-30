@@ -29,40 +29,48 @@ class TicTacToe:
     def is_full(self):
         return ' ' not in self.board
 
-# Initialize game in session state
+# Initialize session state
 if 'game' not in st.session_state:
     st.session_state.game = TicTacToe()
 
-game = st.session_state.game
+if 'board' not in st.session_state:
+    st.session_state.board = [' '] * 9
 
-# Title and instructions
+game = st.session_state.game
+game.board = st.session_state.board
+
+# UI Header
 st.title("🎮 Tic-Tac-Toe (Streamlit Edition)")
 st.markdown("**You are: ❌ (Player X)**  |  **Computer is: ⭕ (Player O)**")
 
-# Turn display
+# Turn notice
 if not game.current_winner and not game.is_full():
     st.info("Your turn! Click an empty square to place ❌")
 
-# Display board
+# Game board
 cols = st.columns(3)
 for i in range(9):
     with cols[i % 3]:
         if game.board[i] == ' ' and game.current_winner is None:
             if st.button(" ", key=i, help="Click to place ❌"):
                 game.make_move(i, 'X')
+                st.session_state.board = game.board.copy()
                 if not game.current_winner and not game.is_full():
                     ai_move = np.random.choice(game.available_actions())
                     game.make_move(ai_move, 'O')
+                    st.session_state.board = game.board.copy()
+                st.rerun()
         else:
             st.markdown(f"<div style='text-align:center; font-size:30px'><b>{game.board[i]}</b></div>", unsafe_allow_html=True)
 
-# Result display
+# Result
 if game.current_winner:
     st.success(f"🎉 Player **{game.current_winner}** wins!")
 elif game.is_full():
     st.warning("🤝 It's a draw!")
 
-# Restart button
+# Restart
 if st.button("🔄 Restart"):
     st.session_state.game = TicTacToe()
+    st.session_state.board = [' '] * 9
     st.rerun()
